@@ -14,6 +14,7 @@ static uint64_t          last_hw;
 static uint64_t          last_xruns;
 static uint64_t          xrun_extra;
 static uint32_t          calm;
+static uint32_t          floor_ms = AU_LEAD_MIN_MS;
 
 static uint64_t ms_bytes(uint32_t ms) {
     return (uint64_t)ms * info.rate / 1000 * info.frame_bytes;
@@ -51,7 +52,7 @@ int card_open(void) {
     au_out_rate = info.rate;
     synth_rate_changed();
 
-    lead       = ms_bytes(AU_LEAD_MIN_MS);
+    lead       = ms_bytes(floor_ms);
     peak       = lead;
     last_hw    = 0;
     last_xruns = 0;
@@ -101,13 +102,14 @@ void card_pump(void) {
         calm       = 0;
     }
 
-    uint64_t lo = ms_bytes(AU_LEAD_MIN_MS);
+    uint64_t lo = ms_bytes(floor_ms);
     uint64_t hi = ms_bytes(AU_LEAD_MAX_MS);
     lead = peak + peak / 2 + info.period_bytes + xrun_extra;
     if (lead < lo) lead = lo;
     if (lead > hi) lead = hi;
 
     uint64_t queued = pos.write_pos > pos.hw_pos ? pos.write_pos - pos.hw_pos : 0;
+    au_shared->queued = (uint32_t)(queued / info.frame_bytes);
     if (queued >= lead)
         return;
 
@@ -120,6 +122,14 @@ void card_pump(void) {
 
     fill(pos.write_pos % info.ring_bytes, want);
     ioctl(dev_fd, AUDIO_IOC_COMMIT, &want);
+    au_shared->queued = (uint32_t)((queued + want) / info.frame_bytes);
+}
+
+void card_latency(uint32_t ms) {
+    if (ms < AU_LEAD_MIN_MS) ms = AU_LEAD_MIN_MS;
+    if (ms > AU_LEAD_MAX_MS) ms = AU_LEAD_MAX_MS;
+    floor_ms = ms;
+    card_pump();
 }
 
 // till the card finishes the period its on

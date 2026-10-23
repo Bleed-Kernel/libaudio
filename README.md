@@ -29,13 +29,3 @@ for (;;) {
     au_pump();
 }
 ```
-
-## Building
-
-```
-make BLIBC_DIR=../blibc
-make install        # copies bin/play into ../Bleed-Kernel/initrd/bin
-```
-
-Programs take `bin/libaudio.a` and `include/bleed_audio.h` the way they take libcrime, Bleed-Doom's
-Makefile has an `audio` target that does it.

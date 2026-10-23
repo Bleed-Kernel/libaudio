@@ -29,6 +29,7 @@ enum {
     CMD_SONG_PAUSE,
     CMD_STREAM_OPEN,
     CMD_STREAM_CLOSE,
+    CMD_LATENCY,
     CMD_CLOSE,
 };
 
@@ -47,6 +48,7 @@ typedef struct {
     volatile uint32_t song_playing;
     volatile uint32_t rate;
     volatile uint64_t stream_pos;
+    volatile uint32_t queued;       // frames on the card at the last pump
     volatile uint8_t  voice_gen[AU_VOICES];
     au_cmd_t          ring[AU_CMD_RING];
 } au_shared_t;
@@ -89,3 +91,4 @@ int  card_open(void);
 void card_close(void);
 void card_pump(void);
 void card_wait(void);
+void card_latency(uint32_t ms);

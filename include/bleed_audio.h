@@ -33,6 +33,8 @@ void au_close(void);
 int  au_is_open(void);
 uint32_t au_rate(void);
 
+void au_latency(uint32_t ms);
+
 // render up to the lead, cheap to call when theres nothing to do
 void au_pump(void);
 
@@ -67,6 +69,7 @@ int  au_song_playing(void);
 // one stream at a time, 0 or -1. pos is frames the card has taken from itß
 int      au_stream_open(uint32_t frames, au_stream_t *out);
 uint64_t au_stream_pos(void);
+uint64_t au_stream_heard(void);     // pos minus whats still queued on the card
 void     au_stream_close(void);
 
 void au_music_volume(int vol);

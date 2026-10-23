@@ -194,6 +194,9 @@ static void apply(const au_cmd_t *c) {
             cmd_data_done(stream_map);
             stream_map = NULL;
             break;
+        case CMD_LATENCY:
+            card_latency((uint32_t)c->a);
+            break;
         case CMD_CLOSE:
             closing = 1;
             break;
@@ -467,6 +470,10 @@ void au_sfx_volume(int vol) {
     send(CMD_SFX_VOLUME, vol, 0, 0, 0, 0, 0);
 }
 
+void au_latency(uint32_t ms) {
+    send(CMD_LATENCY, (int32_t)ms, 0, 0, 0, 0, 0);
+}
+
 void au_music_volume(int vol) {
     send(CMD_MUSIC_VOLUME, vol, 0, 0, 0, 0, 0);
 }
@@ -638,6 +645,12 @@ int au_stream_open(uint32_t frames, au_stream_t *out) {
 
 uint64_t au_stream_pos(void) {
     return au_shared->stream_pos;
+}
+
+uint64_t au_stream_heard(void) {
+    uint64_t pos    = au_shared->stream_pos;
+    uint32_t queued = au_shared->queued;
+    return pos > queued ? pos - queued : 0;
 }
 
 void au_stream_close(void) {
