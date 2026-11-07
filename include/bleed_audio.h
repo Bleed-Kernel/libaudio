@@ -5,7 +5,7 @@
 
 
 #define AU_VOICES       32
-#define AU_SOUNDFONT_DIR "/initrd/soundfonts"
+#define AU_SOUNDFONT_DIR "/usr/share/soundfonts"
 #define AU_LEAD_MIN_MS  40
 #define AU_LEAD_MAX_MS  150
 #define AU_LEAD_XRUN_MS 10

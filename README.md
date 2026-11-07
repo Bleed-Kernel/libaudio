@@ -4,7 +4,7 @@ Sound for Bleed programs, on top of the kernel's `/dev/audio0`.
 
 - a mixer: 32 sample voices, any rate, 8 or 16 bit, mono or stereo, resampled to the card
 - general midi on 16 channels through a soundfont (.sf2), synthesised by [TinySoundFont](https://github.com/schellingb/TinySoundFont) (MIT, vendored in src/vendor)
-- the first .sf2 in /initrd/soundfonts is the default bank, Bleed ships TimGM6mb there
+- the first .sf2 in /usr/share/soundfonts is the default bank, Bleed ships TimGM6mb there
 - a midi file player, type 0 and 1
 - `play`, a little command line player for .wav and .mid
 
